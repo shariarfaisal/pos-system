@@ -1,0 +1,176 @@
+
+type Customer{
+  id: ID! @id
+  name: String!
+  email: String! @unique
+  password: String!
+  phone: String!
+  district: String!
+  subDistrict: String!
+  orders:[Order!]! @relation(name: "CustomerToOrder",onDelete: CASCADE)
+  reviews:[Review!]! @relation(name: "CustomerToReview",onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type EmployeeType{
+  id: ID! @id
+  type: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Employee{
+  id: ID! @id
+  name: String!
+  username: String! @unique
+  email: String! @unique
+  type: EmployeeType! @relation(name: "EmployeeToEmployeeType",onDelete: SET_NULL)
+  password: String!
+  phone: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Vendor{
+  id: ID! @id
+  name: String!
+  phone: String!
+  imports:[Import!]! @relation(name:"VendorToImport",onDelete: CASCADE)
+  refunds:[Refund!]! @relation(name: "VendorToRefund",onDelete: CASCADE)
+}
+
+type Category{
+  id: ID! @id
+  name: String!
+  products:[Product!]! @relation(name: "CategoryToProduct",onDelete: CASCADE)
+}
+
+type Item{
+  id: ID! @id
+  name: String!
+  code: String! @unique
+  product: Product! @relation(name: "ProductToItem",onDelete: SET_NULL)
+  description: String!
+  stocks:[Import!]! @relation(name: "ItemToImport",onDelete: CASCADE)
+  exports:[Export!]! @relation(name: "ItemToExport",onDelete: CASCADE)
+  sales:[Sale!]! @relation(name: "ItemToSale",onDelete: CASCADE)
+  orders:[Order!]! @relation(name: "ItemToOrder",onDelete: CASCADE)
+  reviews:[Review!]! @relation(name: "ItemToReview",onDelete: CASCADE)
+  refunds:[Refund!]! @relation(name: "ItemToRefund",onDelete: CASCADE)
+  exportReturns:[ExportReturn!]!  @relation(name: "ItemToExportReturn",onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Product{
+  id: ID! @id
+  name: String!
+  category: Category! @relation(name: "CategoryToProduct",onDelete: SET_NULL)
+  items:[Item!]! @relation(name: "ProductToItem",onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Import{
+  id: ID! @id
+  vendor: Vendor!  @relation(name:"VendorToImport",onDelete: SET_NULL)
+  employee: Employee! @relation(name: "EmployeeToImport",onDelete: SET_NULL)
+  item: Item! @relation(name: "ItemToImport",onDelete: SET_NULL)
+  quantity: Int!
+  pp: Int!
+  expense: Int!
+  vat: Int!
+  mrp: Int!
+  exp: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Branch{
+  id: ID! @id
+  name: String!
+  username: String! @unique
+  email: String! @unique
+  address: String!
+  password: String!
+  stocks:[Export!]! @relation(name: "BranchToExport",onDelete: CASCADE)
+  sales:[Sale!]! @relation(name: "BranchToSale",onDelete: CASCADE)
+  exportReturns:[ExportReturn!]! @relation(name: "BranchToExportReturn",onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Export{
+  id: ID! @id
+  branch: Branch! @relation(name: "BranchToExport",onDelete: SET_NULL)
+  item: Item! @relation(name: "ItemToExport",onDelete: SET_NULL)
+  quantity: Int!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Discount{
+  id: ID! @id
+  amount: Int!
+  items: [ID!]!
+  validationTime: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Sale{
+  id: ID! @id
+  item: Item! @relation(name: "ItemToSale",onDelete: SET_NULL)
+  quantity: Int!
+  discount: Discount!
+  branch: Branch! @relation(name: "BranchToSale",onDelete: SET_NULL)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+
+enum DeliveryStatus{
+  PENDING
+  PROCESS
+  COMPLETE
+}
+
+type Order{
+  id: ID! @id
+  customer: Customer! @relation(name: "CustomerToOrder",onDelete: SET_NULL)
+  product: Item! @relation(name: "ItemToOrder",onDelete: SET_NULL)
+  quantity: Int!
+  deliveryStatus: DeliveryStatus!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Review{
+  id: ID! @id
+  body: String!
+  star: Int!
+  product: Item! @relation(name: "ItemToReview",onDelete: SET_NULL)
+  customer: Customer! @relation(name: "CustomerToReview",onDelete: SET_NULL)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+
+type Refund{
+  id: ID! @id
+  item: Item! @relation(name: "ItemToRefund",onDelete: SET_NULL)
+  vendor: Vendor! @relation(name: "VendorToRefund",onDelete: SET_NULL)
+  quantity: Int!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ExportReturn{
+  id: ID! @id
+  item: Item! @relation(name: "ItemToExportReturn",onDelete: SET_NULL)
+  quantity: Int!
+  branch: Branch! @relation(name: "BranchToExportReturn",onDelete: SET_NULL)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
