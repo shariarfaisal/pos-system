@@ -15,7 +15,7 @@ type Customer{
 
 type EmployeeType{
   id: ID! @id
-  type: String!
+  name: String!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -46,17 +46,26 @@ type Category{
   products:[Product!]! @relation(name: "CategoryToProduct",onDelete: CASCADE)
 }
 
+type Brand{
+  id: ID! @id
+  name: String!
+  code: String!
+  items:[Item!]! @relation(name: "BrandToItem",onDelete: SET_NULL)
+}
+
 type Item{
   id: ID! @id
   name: String!
+  image: String!
   code: String! @unique
+  brand: Brand! @relation(name: "BrandToItem",onDelete: SET_NULL)
   product: Product! @relation(name: "ProductToItem",onDelete: SET_NULL)
   description: String!
   stocks:[Import!]! @relation(name: "ItemToImport",onDelete: CASCADE)
-  exports:[Export!]! @relation(name: "ItemToExport",onDelete: CASCADE)
-  sales:[Sale!]! @relation(name: "ItemToSale",onDelete: CASCADE)
   orders:[Order!]! @relation(name: "ItemToOrder",onDelete: CASCADE)
   reviews:[Review!]! @relation(name: "ItemToReview",onDelete: CASCADE)
+  sales:[Sale!]! @relation(name: "ItemToSale",onDelete: CASCADE)
+  exports:[Export!]! @relation(name: "ItemToExport",onDelete: CASCADE)
   refunds:[Refund!]! @relation(name: "ItemToRefund",onDelete: CASCADE)
   exportReturns:[ExportReturn!]!  @relation(name: "ItemToExportReturn",onDelete: CASCADE)
   createdAt: DateTime! @createdAt
@@ -81,7 +90,6 @@ type Import{
   pp: Int!
   expense: Int!
   vat: Int!
-  mrp: Int!
   exp: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -104,26 +112,22 @@ type Branch{
 type Export{
   id: ID! @id
   branch: Branch! @relation(name: "BranchToExport",onDelete: SET_NULL)
-  item: Item! @relation(name: "ItemToExport",onDelete: SET_NULL)
+  product: Item! @relation(name: "ItemToExport",onDelete: SET_NULL)
   quantity: Int!
+  pp: Int!
+  vat: Int!
+  mrp: Int!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
-type Discount{
-  id: ID! @id
-  amount: Int!
-  items: [ID!]!
-  validationTime: String!
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
 
 type Sale{
   id: ID! @id
-  item: Item! @relation(name: "ItemToSale",onDelete: SET_NULL)
+  product: Item! @relation(name: "ItemToSale",onDelete: SET_NULL)
+  mrp: Int!
+  pp: Int!
   quantity: Int!
-  discount: Discount!
   branch: Branch! @relation(name: "BranchToSale",onDelete: SET_NULL)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -159,7 +163,7 @@ type Review{
 
 type Refund{
   id: ID! @id
-  item: Item! @relation(name: "ItemToRefund",onDelete: SET_NULL)
+  product: Item! @relation(name: "ItemToRefund",onDelete: SET_NULL)
   vendor: Vendor! @relation(name: "VendorToRefund",onDelete: SET_NULL)
   quantity: Int!
   createdAt: DateTime! @createdAt
@@ -168,7 +172,7 @@ type Refund{
 
 type ExportReturn{
   id: ID! @id
-  item: Item! @relation(name: "ItemToExportReturn",onDelete: SET_NULL)
+  product: Item! @relation(name: "ItemToExportReturn",onDelete: SET_NULL)
   quantity: Int!
   branch: Branch! @relation(name: "BranchToExportReturn",onDelete: SET_NULL)
   createdAt: DateTime! @createdAt
