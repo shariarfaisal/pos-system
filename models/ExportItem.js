@@ -4,7 +4,8 @@ const Schema = mongoose.Schema
 const exportItemSchema = new Schema({
   export:{
     type: mongoose.Schema.Types.ObjectId,
-    ref:'export'
+    ref:'export',
+    required: true
   },
   product:{
     type: mongoose.Schema.Types.ObjectId,

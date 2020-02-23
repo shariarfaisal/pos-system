@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 const Schema = mongoose.Schema
 
 
@@ -27,7 +28,7 @@ const employeeSchema = new Schema({
     max: 25
   },
   type:{
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'employeeType'
   },
   password:{
@@ -43,5 +44,9 @@ const employeeSchema = new Schema({
     default: Date.now
   }
 })
+
+employeeSchema.methods.getToken = function(){
+  return jwt.sign({_id: this._id, type: this.type},'secret')
+}
 
 module.exports = mongoose.model('employee',employeeSchema)

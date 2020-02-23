@@ -9,6 +9,10 @@ const vendorSchema = new Schema({
     max: 25,
     trim: true
   },
+  email:{
+    type: String,
+    required: false
+  },
   phone:{
     type: String,
     required: true,
@@ -16,7 +20,7 @@ const vendorSchema = new Schema({
   },
   address:{
     type: String,
-    required: false,
+    required: true,
     max: 255,
     trim: true
   },

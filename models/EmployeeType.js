@@ -7,7 +7,8 @@ const employeeTypeSchema = new Schema({
     type: String,
     max: 25,
     required: true,
-    trim: true
+    trim: true,
+    lowercase: true
   },
   createdAt:{
     type: Date,
