@@ -72,7 +72,7 @@ const updateEmployee = async (req,res) => {
   if(employee.email !== email) emailChecker(email,res)
   if(employee.username !== username) usernameChecker(username,res)
 
-  const update = await Employee.findByIdAndUpdate(req.employee._id,{$set:{ name }},{new: true})
+  const update = await Employee.findByIdAndUpdate(req.employee._id,{$set:{ name, username, email, phone }},{new: true})
   if(!update) return res.status(500).send("Something wrong!")
   return res.status(200).send(update)
 }
