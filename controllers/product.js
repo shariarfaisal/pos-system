@@ -20,7 +20,7 @@ const createProduct = async (req,res) => {
   const { error, isValide } = productValidator(req.body)
   if(!isValide) return res.status(400).send(error)
 
-  const exists = await Product.find({ name, category })
+  const exists = await Product.findOne({ name, category })
   if(exists) return res.status(400).send({name: `${name} exists!`})
 
   const product = new Product({ name, category })

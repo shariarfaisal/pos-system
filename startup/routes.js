@@ -6,6 +6,8 @@ const Employee = require('../routes/employee')
 const Vendor = require('../routes/vendor')
 const Category = require('../routes/category')
 const Product = require('../routes/product')
+const Brand = require('../routes/brand')
+const Item = require('../routes/item')
 
 module.exports = (app) => {
   app.use(cors())
@@ -18,4 +20,6 @@ module.exports = (app) => {
   app.use('/api/vendor/',Vendor)
   app.use('/api/category/',Category)
   app.use('/api/product/',Product)
+  app.use('/api/brand/',Brand)
+  app.use('/api/item/',Item)
 }

@@ -6,6 +6,7 @@ const vendorValidator = (data) => {
 
   // Name Validation ...
   if(!name) error.name = "Name required!"
+  if(name && name.length < 3) error.name = `Name must be at least character!`
   if(name && name.length > 25) error.name = `Name must be in 25 character!`
 
   // Name Validation ...
