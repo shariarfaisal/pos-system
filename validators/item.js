@@ -3,7 +3,7 @@ const vldr = require('validator')
 
 
 const itemValidator = (data,type="create") => {
-  const { name, code, image, description } = data
+  const { name, code, description } = data
   let error = {}
 
   // Name Validation ...
@@ -14,7 +14,7 @@ const itemValidator = (data,type="create") => {
   if(!code) error.code = "Code required!"
 
 
-  if(type !== 'update'){
+  if(type === 'create'){
     if(!data.brand) error.brand = "Brand required!"
     if(data.brand && !mongoose.Types.ObjectId.isValid(data.brand)){
       error.brand = "Invalid Brand ID!"
@@ -23,6 +23,13 @@ const itemValidator = (data,type="create") => {
     if(!data.product) error.product = "Product required!"
     if(data.product && !mongoose.Types.ObjectId.isValid(data.product)){
       error.product = "Invalid Product ID!"
+    }
+  }
+
+  if(type === 'subItem'){
+    if(!data.item) error.item = "Item required"
+    if(data.item && !mongoose.Types.ObjectId.isValid(data.item)){
+      error.item = "Item ID is not valid!"
     }
   }
 
