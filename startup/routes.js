@@ -11,6 +11,8 @@ const Item = require('../routes/item')
 const SubItem = require('../routes/subItem')
 const Import = require('../routes/import')
 const Branch = require('../routes/branch')
+const Export = require('../routes/export')
+const Stocks = require('../routes/stocks')
 
 module.exports = (app) => {
   app.use(cors())
@@ -28,4 +30,6 @@ module.exports = (app) => {
   app.use('/api/subItem/',SubItem)
   app.use('/api/import/',Import)
   app.use('/api/branch/',Branch)
+  app.use('/api/export/',Export)
+  app.use('/api/stocks/',Stocks)
 }

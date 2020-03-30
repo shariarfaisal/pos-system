@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const importItemSchema = require('./importItem')
 
 const importSchema = new Schema({
   vendor:{
@@ -7,40 +8,28 @@ const importSchema = new Schema({
     ref: 'vendor',
     required: true
   },
+  title:{
+    type: String,
+    trim: true,
+    max: 100,
+    required: true
+  },
+  note:{
+    type: String,
+    trim: true,
+    max: 1000
+  },
   employee:{
     type: Schema.Types.ObjectId,
     ref:'employee',
     required: true,
   },
-  item:{
-    type: Schema.Types.ObjectId,
-    ref:'item',
-    required: true,
-  },
-  subItems:[{
-    item:{
-      type: Schema.Types.ObjectId,
-      ref:'subItem',
-      required: true
-    },
-    quantity: Number,
-    pp: Number
-  }],
-  quantity:{
-    type: Number,
-    required: function(){
-      return this.subItems.length === 0
-    }
-  },
-  pp:{
-    type: Number,
-    required:function(){
-      return this.subItems.length === 0
-    }
-  },
-  vat: Number,
-  expireDate: String,
+  items:[importItemSchema],
   importDate: String,
+  total:{
+    type: Number,
+    required: true
+  },
   createdAt:{
     type: Date,
     default: Date.now

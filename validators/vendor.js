@@ -23,8 +23,7 @@ const vendorValidator = (data) => {
   if(phone.length > 25) error.phone = "Invalid phone number!"
 
   // Check Errors ...
-  if(Object.keys(error).length !== 0) return {error,isValide: false}
-  return {error,isValide: true}
+  return {error,isValide: Object.keys(error).length === 0}
 }
 
 module.exports = vendorValidator

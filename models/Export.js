@@ -8,6 +8,11 @@ const exportSchema = new Schema({
     ref:'branch',
     required: true
   },
+  employee:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'employee',
+    required: true
+  },
   products:[exportItemSchema],
   createdAt:{
     type: Date,

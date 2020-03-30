@@ -4,7 +4,7 @@ const brandValidator = (data) => {
   const { name, code } = data
   const error = {}
   if(!name) error.name = "Name required!"
-  if(name.length < 3) error.name = "Name must be at least 3 characters!"
+  if(name.length < 2) error.name = "Name must be at least 2 characters!"
   if(name.length > 25) error.name = "Name must be in 25 characters!"
   if(!code) error.code = "Code required!"
   return {error,isValide: Object.keys(error).length === 0}
@@ -18,7 +18,7 @@ const brands = async (req,res) => {
 
 const brand = async (req,res) => {
   const brand = await Brand.findById(req.params.id)
-  if(!brand) return res.status(400).send("Not found!")
+  if(!brand) return res.status(400).send({msg: "Not found!"})
   return res.status(200).send(brand)
 }
 
@@ -46,7 +46,7 @@ const updateBrand = async (req,res) => {
   if(!isValide) return res.status(400).send(error)
 
   const brand = await Brand.findById(req.params.id)
-  if(!brand) return res.status(400).send("Not found!")
+  if(!brand) return res.status(400).send({msg: "Not found!"})
 
   if(name !== brand.name){
     const nameExists = await Brand.findOne({ name })
@@ -65,7 +65,7 @@ const updateBrand = async (req,res) => {
 
 const deleteBrand = async (req,res) => {
   const exists = await Brand.findById(req.params.id)
-  if(!exists) return res.status(400).send("Not found!")
+  if(!exists) return res.status(400).send({msg: "Not found!"})
   const deleted = await Brand.findByIdAndDelete(req.params.id)
   if(!deleted) return res.status(500).send("Something wrong!")
   return res.status(200).send(deleted)

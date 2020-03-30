@@ -1,12 +1,23 @@
 const Product = require('../models/Product')
+const Item = require('../models/Item')
+const Category = require('../models/Category')
 const productValidator = require('../validators/product')
-
+const mongoose = require('mongoose')
 
 const products = async (req,res) => {
-  const products = await Product.find().populate('category')
-  if(!products) return res.status(500).send("Something wrong!")
+  let payload = {}
+  let products = []
+  if(mongoose.Types.ObjectId.isValid(req.params.id)){
+    products = await Product.find({ category: req.params.id }).populate('category')
+  }else{
+    const category = await Category.findOne({ name: req.params.id })
+    if(!category) return res.status(400).send({ msg: "Not Found!"})
+    products = await Product.find({ category: category._id }).populate('category')
+  }
   return res.status(200).send(products)
 }
+
+
 
 const product = async (req,res) => {
   const product = await Product.findById(req.params.id).populate('category')
@@ -14,11 +25,23 @@ const product = async (req,res) => {
   return res.status(200).send(product)
 }
 
+const items = async (req,res) => {
+  const items = await Item.find({ product : req.params.id })
+  if(!items) return res.status(500).send("Something wrong!")
+  return res.status(200).send(items)
+}
+
 // Make product ...
 const createProduct = async (req,res) => {
-  const { name, category } = req.body
+  let { name, category } = req.body
   const { error, isValide } = productValidator(req.body)
   if(!isValide) return res.status(400).send(error)
+
+  if(!mongoose.Types.ObjectId.isValid(category)){
+    const cat = await Category.findOne({ name: category })
+    if(!cat) return res.status(400).send({ msg: "Category not found!"})
+    category = cat._id
+  }
 
   const exists = await Product.findOne({ name, category })
   if(exists) return res.status(400).send({name: `${name} exists!`})
@@ -68,6 +91,7 @@ module.exports = {
   createProduct,
   products,
   product,
+  items,
   updateProduct,
   deleteProduct
 }

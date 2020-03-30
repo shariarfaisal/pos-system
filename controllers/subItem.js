@@ -3,7 +3,7 @@ const itemValidator = require('../validators/item')
 
 
 const subItems = async (req,res) => {
-  const subItems = await SubItem.find().populate('item')
+  const subItems = await SubItem.find({ item: req.params.id })
   if(!subItems) return res.status(500).send("Something wrong!")
   return res.status(200).send(subItems)
 }

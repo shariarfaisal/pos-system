@@ -3,9 +3,15 @@ const itemValidator = require('../validators/item')
 
 
 const items = async (req,res) => {
-  const items = await Item.find().populate('brand').populate('product')
+  const items = await Item.find({ product: req.params.id }).populate('brand').populate('product')
   if(!items) return res.status(500).send("Something wrong!")
   return res.status(200).send(items)
+}
+
+const itemsWithBrand = async (req,res) => {
+  const products = await Item.find({ brand: req.params.brandId }).populate('product')
+  if(!products) return res.status(500).send({msg: "Server Error!"})
+  return res.status(200).send(products)
 }
 
 const item = async (req,res) => {
@@ -69,5 +75,6 @@ module.exports = {
   item,
   createItem,
   updateItem,
-  deleteItem
+  deleteItem,
+  itemsWithBrand
 }
