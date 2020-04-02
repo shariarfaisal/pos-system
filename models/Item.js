@@ -11,7 +11,8 @@ const itemSchema = new Schema({
   image: String,
   code:{
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   brand:{
     type: mongoose.Schema.Types.ObjectId,

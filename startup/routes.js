@@ -13,6 +13,7 @@ const Import = require('../routes/import')
 const Branch = require('../routes/branch')
 const Export = require('../routes/export')
 const Stocks = require('../routes/stocks')
+const ExportRequest = require('../routes/exportRequest')
 
 module.exports = (app) => {
   app.use(cors())
@@ -32,4 +33,5 @@ module.exports = (app) => {
   app.use('/api/branch/',Branch)
   app.use('/api/export/',Export)
   app.use('/api/stocks/',Stocks)
+  app.use('/api/exportRequest/',ExportRequest)
 }
