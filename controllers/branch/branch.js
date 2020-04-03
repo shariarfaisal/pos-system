@@ -1,6 +1,6 @@
-const Branch = require('../models/Branch')
+const Branch = require('../../models/branch/Branch')
 const bcrypt = require('bcryptjs')
-const branchValidator = require('../validators/branch')
+const branchValidator = require('../../validators/branch')
 
 // Get All Branchs...
 const branchs = async (req,res) => {

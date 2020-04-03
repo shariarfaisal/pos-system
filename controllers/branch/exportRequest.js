@@ -1,6 +1,6 @@
-const ExportRequest = require('../models/ExportRequest')
-const Item = require('../models/Item')
-const SubItem = require('../models/SubItem')
+const ExportRequest = require('../../models/branch/ExportRequest')
+const Item = require('../../models/Item')
+const SubItem = require('../../models/SubItem')
 
 const branchRequests = async (req,res) => {
   const rqsts = await ExportRequest.find({ branch: req.branch._id })
@@ -40,6 +40,8 @@ const createRequest = async (req,res) => {
 const sendRequest = async (req,res) => {
   const exists = await ExportRequest.findById(req.params.requestId)
   if(!exists) return res.status(404).send({msg: "Request not found!"})
+
+  if(exists.status !== 'create') return res.status(400).send({msg: `Request ${exists.status}!`})
 
   const sendRqst = await ExportRequest.findByIdAndUpdate(req.params.requestId,{$set:{ status: 'pending'}},{new: true})
   return res.status(200).send(sendRqst)

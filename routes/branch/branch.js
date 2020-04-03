@@ -6,9 +6,9 @@ const {
   createBranch,
   login,
   updateBranch,
-  deleteBranch} = require('../controllers/branch')
-const branchAuth = require('../middleware/branchAuth')
-const idChecker = require('../middleware/idChecker')
+  deleteBranch} = require('../../controllers/branch/branch')
+const branchAuth = require('../../middleware/branchAuth')
+const idChecker = require('../../middleware/idChecker')
 
 
 router.get('/',branchs)

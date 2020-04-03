@@ -10,10 +10,10 @@ const Brand = require('../routes/brand')
 const Item = require('../routes/item')
 const SubItem = require('../routes/subItem')
 const Import = require('../routes/import')
-const Branch = require('../routes/branch')
 const Export = require('../routes/export')
 const Stocks = require('../routes/stocks')
-const ExportRequest = require('../routes/exportRequest')
+const Branch = require('../routes/branch/branch')
+const ExportRequest = require('../routes/branch/exportRequest')
 
 module.exports = (app) => {
   app.use(cors())

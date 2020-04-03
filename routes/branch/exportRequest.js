@@ -1,6 +1,6 @@
 const router = require('express').Router()
-const branchAuth = require('../middleware/branchAuth')
-const employeeAuth = require('../middleware/employeeAuth')
+const branchAuth = require('../../middleware/branchAuth')
+const employeeAuth = require('../../middleware/employeeAuth')
 const {
   branchRequests,
   requests,
@@ -13,7 +13,7 @@ const {
   addSubItemToRequest,
   removeItem,
   removeSubItem
-} = require('../controllers/exportRequest')
+} = require('../../controllers/branch/exportRequest')
 
 
 router.get('/',employeeAuth,requests)
@@ -28,4 +28,4 @@ router.delete('/:requestId',branchAuth,removeRequest)
 router.delete('/:requestId/:itemId',branchAuth,removeItem)
 router.delete('/:requestId/:itemId/:subItemId',branchAuth,removeSubItem)
 
-module.exports = router 
+module.exports = router
