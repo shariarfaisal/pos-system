@@ -75,16 +75,31 @@ const updateEmployee = async (req,res) => {
 
   if(employee.email !== email){
     const emailExist = await Employee.findOne({ email })
-    if(emailExist) return res.status(400).send({email: "Emaili taken!"})
+    if(emailExist) error.email = "Email taken!"
   }
 
   if(employee.username !== username){
     const usernameExist = await Employee.findOne({ username })
-    if(usernameExist) return res.status(400).send({username: "Username taken!"})
+    if(usernameExist) error.username = "Username taken!"
+  }
+
+  if(Object.keys(error).length > 0){
+    return res.status(400).send(error)
   }
 
   const update = await Employee.findByIdAndUpdate(req.employee._id,{$set:{ name, username, email, phone }},{new: true})
   if(!update) return res.status(500).send("Something wrong!")
+  return res.status(200).send(update)
+}
+
+// Active Update
+const activeHandler = async (req,res) => {
+  const { active } = req.body
+  console.log(active);
+  if(typeof active !== 'boolean') return res.status(400).send({msg: "Active must have to be boolean type!"})
+  const exists = await Employee.findById(req.params.id)
+  if(!exists) return res.status(404).send({ msg: "Not found!"})
+  const update = await Employee.findByIdAndUpdate(req.params.id,{$set:{ active }},{new: true})
   return res.status(200).send(update)
 }
 
@@ -106,5 +121,6 @@ module.exports = {
   createEmployee,
   login,
   updateEmployee,
+  activeHandler,
   deleteEmployee
 }

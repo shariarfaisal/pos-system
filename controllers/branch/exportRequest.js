@@ -1,6 +1,8 @@
 const ExportRequest = require('../../models/branch/ExportRequest')
 const Item = require('../../models/Item')
 const SubItem = require('../../models/SubItem')
+const Export = require('../../models/Export')
+
 
 const branchRequests = async (req,res) => {
   const rqsts = await ExportRequest.find({ branch: req.branch._id })
@@ -9,14 +11,23 @@ const branchRequests = async (req,res) => {
 
 const requests = async (req,res) => {
   const query = {}
-  if(req.query.status) query.status = req.query.status
+  if(req.query.status) query.status = {$in: JSON.parse(req.query.status)}
   if(req.query.branch) query.branch = req.query.branch
-  const results = await ExportRequest.find(query).select(' -items ')
+
+  const results = await ExportRequest.find(query)
+                                     .select(' -items ')
+                                     .populate('branch')
   return res.status(200).send(results)
 }
 
 const request = async (req,res) => {
-  const request = await ExportRequest.findById(req.params.requestId).populate('items.item').populate('items.subItems.item')
+  const request = await ExportRequest.findById(req.params.requestId)
+                                    .populate('branch')
+                                    .populate('items.item')
+                                    .populate('items.subItems.item')
+                                    .populate('export')
+
+
   if(!request) return res.status(404).send({msg: "Not Found!"})
   return res.status(200).send(request)
 }
@@ -43,7 +54,7 @@ const sendRequest = async (req,res) => {
 
   if(exists.status !== 'create') return res.status(400).send({msg: `Request ${exists.status}!`})
 
-  const sendRqst = await ExportRequest.findByIdAndUpdate(req.params.requestId,{$set:{ status: 'pending'}},{new: true})
+  const sendRqst = await ExportRequest.findByIdAndUpdate(req.params.requestId,{$set:{ status: 'pending', createdAt: Date.now() }},{new: true})
   return res.status(200).send(sendRqst)
 }
 
@@ -54,6 +65,22 @@ const cancelRequest = async (req,res) => {
   const cancel = await ExportRequest.findByIdAndUpdate(req.params.requestId,{$set:{ status: 'create' }},{new: true})
   return res.status(200).send({status: cancel.status})
 }
+
+const acceptRequest = async (req,res) => {
+  const exists = await ExportRequest.findById(req.params.requestId)
+  if(!exists) return res.status(404).send({msg: "Request not found!"})
+  if(exists.status !== 'pending') return res.status(400).send({msg: "The Request is not acceptable!"})
+
+  const exptExists = await Export.findOne({ request: exists._id })
+  if(exptExists) return res.status(400).send({msg: "Request been accepted!"})
+
+  const expt = new Export({ request: exists._id, employee: req.employee._id, products:[] })
+  await expt.save()
+
+  const accept = await ExportRequest.findByIdAndUpdate(req.params.requestId,{$set:{ status: 'process', export: expt._id }},{new: true})
+  return res.status(200).send(accept)
+}
+
 
 const removeRequest = async (req,res) => {
   const remove = await ExportRequest.findByIdAndDelete(req.params.requestId)
@@ -73,35 +100,48 @@ const addItemToRequest = async (req,res) => {
   if(!request) return res.status(404).send({msg: "Export Request Not Found!"})
 
   const getItem = await Item.findOne({ code })
-  if(!getItem) return res.status(404).send({code: "Item not found!"})
+  if(!getItem) return res.status(404).send({code: "Invalid Code!"})
+
+  const itemExists = request.items.find(i => i.item.toString() === getItem._id.toString())
+  if(itemExists) return res.status(400).send({msg: "Item Already Exists!"})
 
   const index = request.items.push({ item: getItem._id, quantity: Number(quantity) })
   await request.save()
-  return res.status(201).send(request.items[index-1])
+
+// Get New Created Item ...
+  const upItem = request.items[index-1]
+  const newRequest = await ExportRequest.findById(req.params.requestId).populate('items.item')
+  const resItem = newRequest.items.find(i => i._id.toString() === upItem._id.toString())
+  return res.status(201).send(resItem)
 }
 
 const addSubItemToRequest = async (req,res) => {
   const { code, quantity } = req.body
+  if(!code) return res.status(400).send({code: "Code required!"})
+  if(!quantity) return res.status(400).send({quantity: "Quantity required!"})
 
   const request = await ExportRequest.findOne({ _id: req.params.requestId, branch: req.branch._id})
   if(!request) return res.status(404).send({msg: "Export Request Not Found!"})
 
 
   const reqItem = request.items.find(i => i._id.toString() === req.params.itemId)
-
   if(!reqItem) return res.status(404).send({msg: "Item Not Found!"})
 
   const subItem = await SubItem.findOne({ code, item: reqItem.item })
   if(!subItem) return res.status(404).send({msg: "Code isn't valid!"})
-
 
   const exists = reqItem.subItems.find(i => i.item.toString() === subItem._id.toString())
   if(exists) return res.status(400).send({msg: 'Sub Item already exists!'})
 
   const index = reqItem.subItems.push({ item: subItem._id, quantity })
   await request.save()
+
+  // Get Updated SubItem ....
   const resItem = request.items.find(i => i._id.toString() === req.params.itemId).subItems[index-1]
-  return res.status(201).send(resItem)
+  const upRequest = await ExportRequest.findOne({ _id: req.params.requestId, branch: req.branch._id}).populate('items.item').populate('items.subItems.item')
+  const upItem = upRequest.items.find(i => i._id.toString() === req.params.itemId)
+  const upSubItem = upItem.subItems.find(i => i._id.toString() === resItem._id.toString())
+  return res.status(201).send(upSubItem)
 }
 
 const removeItem = async (req,res) => {
@@ -145,5 +185,6 @@ module.exports = {
   addItemToRequest,
   addSubItemToRequest,
   removeItem,
-  removeSubItem
+  removeSubItem,
+  acceptRequest
 }

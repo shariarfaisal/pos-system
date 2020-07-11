@@ -1,6 +1,27 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+const subItemSchema = new Schema({
+  item:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'subItem',
+    required: true
+  },
+  quantity:{
+    type: Number,
+    required: true
+  },
+  pp:{
+    type: Number,
+    required: true
+  },
+  mrp:{
+    type: Number,
+    required: true
+  },
+  vat: Number
+})
+
 const exportItemSchema = new Schema({
   item:{
     type: mongoose.Schema.Types.ObjectId,
@@ -20,28 +41,7 @@ const exportItemSchema = new Schema({
     required: function(){
     return this.quantity !== 0
   }},
-  subItems:[
-    {
-      item:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'subItem',
-        required: true
-      },
-      quantity:{
-        type: Number,
-        required: true
-      },
-      pp:{
-        type: Number,
-        required: true
-      },
-      mrp:{
-        type: Number,
-        required: true
-      },
-      vat: Number
-    }
-  ],
+  subItems:[subItemSchema],
   expireDate: String,
   createdAt:{
     type: Date,

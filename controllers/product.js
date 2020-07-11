@@ -33,7 +33,8 @@ const items = async (req,res) => {
 
 // Make product ...
 const createProduct = async (req,res) => {
-  let { name, category } = req.body
+  let { name, code, category } = req.body
+
   const { error, isValide } = productValidator(req.body)
   if(!isValide) return res.status(400).send(error)
 
@@ -43,10 +44,13 @@ const createProduct = async (req,res) => {
     category = cat._id
   }
 
+  const codeExist = await Product.findOne({ code })
+  if(codeExist) return res.status(400).send({ code: "Code taken!"})
+
   const exists = await Product.findOne({ name, category })
   if(exists) return res.status(400).send({name: `${name} exists!`})
 
-  const product = new Product({ name, category })
+  const product = new Product({ name, code, category })
   await product.save()
   if(!product) return res.status(500).send("Something wrong!")
   return res.status(201).send(product)
@@ -61,13 +65,14 @@ const updateProduct = async (req,res) => {
   if(!name) error.name = "Name required!"
   if(name && name.length < 3) error.name = `Name must be at least 3 character!`
   if(name && name.length > 25) error.name = `Name must be in 25 character!`
-  if(error.name) return res.status(400).send(error)
+  if(Object.keys(error).length > 0) return res.status(400).send(error)
 
 
   const product = await Product.findById(req.params.id)
-  if(!product) return res.status(400).send("Not found!")
+  if(!product) return res.status(400).send({msg: "Not found!"})
+
   if(name !== product.name){
-    const exists = await Product.find({ name, category: product.category })
+    const exists = await Product.findOne({ name, category: product.category })
     if(exists) return res.status(400).send({name: `${name} exists!`})
   }
 

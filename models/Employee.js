@@ -42,6 +42,10 @@ const employeeSchema = new Schema({
   updatedAt:{
     type: Date,
     default: Date.now
+  },
+  active:{
+    type: Boolean,
+    default: true
   }
 })
 

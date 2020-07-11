@@ -38,7 +38,7 @@ const updateSubItem = async (req,res) => {
   if(!isValide) return res.status(400).send(error)
 
   const subItem = await SubItem.findById(req.params.id)
-  if(!subItem) return res.status(400).send("Not found!")
+  if(!subItem) return res.status(400).send({msg: "Not found!"})
 
 
   if(name !== subItem.name){
@@ -47,7 +47,7 @@ const updateSubItem = async (req,res) => {
   }
 
   if(code !== subItem.code){
-    const codeExists = await SubItem.findOne({ code, item })
+    let codeExists = await SubItem.findOne({ code })
     if(codeExists) return res.status(400).send({code: `${codeExists.code} already exists!`})
   }
 

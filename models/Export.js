@@ -3,9 +3,9 @@ const exportItemSchema = require('./ExportItem')
 const Schema = mongoose.Schema
 
 const exportSchema = new Schema({
-  branch:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref:'branch',
+  request:{
+    type: Schema.Types.ObjectId,
+    ref:'exportRequest',
     required: true
   },
   employee:{

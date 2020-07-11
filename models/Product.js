@@ -8,6 +8,12 @@ const productSchema = new Schema({
     trim: true,
     max: 25
   },
+  code:{
+    type: String,
+    required: true,
+    unique: true,
+    max: 20
+  },
   category:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'category',

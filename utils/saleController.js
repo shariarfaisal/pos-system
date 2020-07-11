@@ -4,23 +4,23 @@
 const saleController = async (imports,data) => {
   const { quantity, subItems } = data
 
-  let h = quantity
+  let qty = quantity
   let subs = subItems
   let sum = subItems.map(m => m.quantity).reduce((a,b) => a+b)
 
 
   for(let i in imports){
-    if(h === 0 && sum === 0){
+    if(qty === 0 && sum === 0){
       break;
     }
     // Quantity exporting from imports
-    if(h > 0){
-      if(imports[i].quantity >= h){
-        imports[i].quantity -= h
-        imports[i].exports += h
-        h = 0
+    if(qty > 0){
+      if(imports[i].quantity >= qty){
+        imports[i].quantity -= qty
+        imports[i].exports += qty
+        qty = 0
       }else{
-        h = h - imports[i].quantity
+        qty = qty - imports[i].quantity
         const q = imports[i].quantity
         imports[i].quantity = 0
         imports[i].exports = imports[i].exports + q

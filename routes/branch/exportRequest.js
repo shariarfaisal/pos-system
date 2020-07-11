@@ -12,7 +12,8 @@ const {
   addItemToRequest,
   addSubItemToRequest,
   removeItem,
-  removeSubItem
+  removeSubItem,
+  acceptRequest
 } = require('../../controllers/branch/exportRequest')
 
 
@@ -24,6 +25,7 @@ router.post('/:requestId/item',branchAuth,addItemToRequest)
 router.post('/:requestId/:itemId/subItem',branchAuth,addSubItemToRequest)
 router.put('/:requestId/send',branchAuth,sendRequest)
 router.put('/:requestId/cancel',branchAuth,cancelRequest)
+router.put('/:requestId/accept',employeeAuth,acceptRequest)
 router.delete('/:requestId',branchAuth,removeRequest)
 router.delete('/:requestId/:itemId',branchAuth,removeItem)
 router.delete('/:requestId/:itemId/:subItemId',branchAuth,removeSubItem)

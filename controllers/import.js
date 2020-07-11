@@ -17,7 +17,9 @@ const getTotal = (impt) => {
 
 // Get All Imports ...
 const imports = async (req,res) => {
-  const imports = await Import.find().populate('vendor').populate('employee')
+  const imports = await Import.find()
+                              .populate('vendor')
+                              .populate('employee')
   if(!imports) return res.status(500).send("Something wrong!")
   return res.status(200).send(imports)
 }
@@ -27,7 +29,8 @@ const activeImport = async (req,res) => {
   const imports = await Import.find()
                         .where('employee').equals(req.employee._id)
                         .where('importDate').gt(req.query.gt).lt(req.query.lt)
-                        .populate('vendor').populate('employee')
+                        .populate('vendor')
+                        .populate('employee')
   if(!imports) return res.status(500).send({msg: "Server error!"})
   return res.status(200).send(imports)
 }

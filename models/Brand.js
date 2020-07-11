@@ -13,6 +13,10 @@ const brandSchema = new Schema({
     required: true,
     max: 255
   },
+  products:[{
+    type: Schema.Types.ObjectId,
+    ref:'product'
+  }],
   createdAt:{
     type: Date,
     default: Date.now

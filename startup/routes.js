@@ -13,6 +13,7 @@ const Import = require('../routes/import')
 const Export = require('../routes/export')
 const Stocks = require('../routes/stocks')
 const Branch = require('../routes/branch/branch')
+const BranchItem = require('../routes/branch/branchItem')
 const ExportRequest = require('../routes/branch/exportRequest')
 
 module.exports = (app) => {
@@ -31,6 +32,7 @@ module.exports = (app) => {
   app.use('/api/subItem/',SubItem)
   app.use('/api/import/',Import)
   app.use('/api/branch/',Branch)
+  app.use('/api/branchItem/',BranchItem)
   app.use('/api/export/',Export)
   app.use('/api/stocks/',Stocks)
   app.use('/api/exportRequest/',ExportRequest)
